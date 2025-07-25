@@ -1,3 +1,5 @@
+// game.js — Juego de memoria con datos de jugador integrados
+
 const gameSection = document.getElementById("screenGame");
 const thanksSection = document.getElementById("screenThanks");
 const bgSource = document.getElementById("bgSource");
@@ -50,20 +52,18 @@ function create() {
 
   const images = [];
   for (let i = 1; i <= totalPairs; i++) {
-    images.push(`img${i}`);
-    images.push(`img${i}`);
+    images.push(`img${i}`, `img${i}`);
   }
 
   Phaser.Utils.Array.Shuffle(images);
 
   const cardSize = 215;
   const spacing = 1;
-const totalWidth = cols * cardSize + (cols - 1) * spacing;
-const totalHeight = rows * cardSize + (rows - 1) * spacing;
+  const totalWidth = cols * cardSize + (cols - 1) * spacing;
+  const totalHeight = rows * cardSize + (rows - 1) * spacing;
 
-const offsetX = (this.scale.width - totalWidth) / 1;
-const offsetY = (this.scale.height - totalHeight) / 1;
-
+  const offsetX = (this.scale.width - totalWidth) / 2;
+  const offsetY = (this.scale.height - totalHeight) / 2;
 
   for (let i = 0; i < cols * rows; i++) {
     const x = offsetX + (i % cols) * (cardSize + spacing);
@@ -103,7 +103,15 @@ function flipCard(scene, card) {
         if (matchedPairs === totalPairs) {
           winSound?.play();
           const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
-          const score = { time: elapsedTime, moves: moveCount };
+          const player = JSON.parse(localStorage.getItem("bam-player") || "{}");
+
+          const score = {
+            time: elapsedTime,
+            moves: moveCount,
+            name: `${player.name ?? "Jugador"} ${player.last ?? ""}`.trim(),
+            country: player.country ?? "Desconocido"
+          };
+
           saveScore(score);
 
           scene.time.delayedCall(1500, () => {
@@ -118,10 +126,12 @@ function flipCard(scene, card) {
 
             const topScores = getTopScores();
             topScoresEl.innerHTML = topScores
-              .map((s, i) => `<li>${i + 1}. Tiempo: ${s.time}s, Movs: ${s.moves}</li>`)
+              .map((s, i) =>
+                `<li>${i + 1}. ${s.name} (${s.country}) – Tiempo: ${s.time}s, Movs: ${s.moves}</li>`)
               .join("");
 
-            document.getElementById("resultText").textContent = `¡Completado!\nPares encontrados: ${matchedPairs}`;
+            document.getElementById("resultText").textContent =
+              `¡Completado!\nPares encontrados: ${matchedPairs}`;
             startFireworks();
           });
         }
