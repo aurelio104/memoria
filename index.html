@@ -14,17 +14,6 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
 </head>
-<!-- Formulario (oculto por defecto) -->
-<section id="formScreen" style="display: none;" class="form-screen">
-  <form id="playerForm" class="form-glass">
-    <h2>👤 Tus datos</h2>
-    <input type="text" id="firstName" placeholder="Nombre" required />
-    <input type="text" id="lastName" placeholder="Apellido" required />
-    <input type="email" id="email" placeholder="Correo" required />
-    <button type="submit">Continuar</button>
-  </form>
-</section>
-
 <body>
   <!-- Splash Screen -->
   <section id="splashScreen">
@@ -39,14 +28,14 @@
     <source id="bgSource" src="assets/pagina_1.mp4" type="video/mp4">
   </video>
 
-  <!-- Formulario inicial -->
-  <section id="screenForm">
-    <form id="playerForm" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: black; color: white; font-family: sans-serif;">
-      <h2>Ingresa tus datos</h2>
-      <input type="text" id="firstName" placeholder="Nombre" required style="margin: 10px; padding: 10px; width: 80%; max-width: 300px;">
-      <input type="text" id="lastName" placeholder="Apellido" required style="margin: 10px; padding: 10px; width: 80%; max-width: 300px;">
-      <input type="email" id="email" placeholder="Correo" required style="margin: 10px; padding: 10px; width: 80%; max-width: 300px;">
-      <button type="submit" style="padding: 10px 20px; margin-top: 15px; background: #00ffff; border: none; color: black; font-weight: bold;">Comenzar</button>
+  <!-- Formulario después del botón JUGAR -->
+  <section id="formScreen" style="display: none;" class="form-screen">
+    <form id="playerForm" class="form-glass">
+      <h2>👤 Tus datos</h2>
+      <input type="text" id="firstName" placeholder="Nombre" required />
+      <input type="text" id="lastName" placeholder="Apellido" required />
+      <input type="email" id="email" placeholder="Correo" required />
+      <button type="submit">Continuar</button>
     </form>
   </section>
 
@@ -88,6 +77,7 @@
   <audio id="startSound" src="assets/start.mp3"></audio>
   <audio id="moveSound" src="assets/move.mp3"></audio>
   <audio id="winSound" src="assets/win.mp3"></audio>
+
 
   <!-- Phaser y Juego -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
