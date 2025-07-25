@@ -1,0 +1,321 @@
+/* Reset general */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(#000000, #000000);
+  color: #ffffff;
+  font-family: "Helvetica Neue", sans-serif;
+  overflow: hidden;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: -10;
+}
+
+/* ============ Video de fondo ============ */
+#backgroundVideo {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  height: 100vh;
+  width: auto;
+  max-width: 100vw;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  z-index: -1;
+}
+
+/* ============ Splash screen ============ */
+#splashScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#splashImage {
+  width: 80%;
+  height: 80%;
+  object-fit: cover;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+#splashVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  display: none;
+}
+
+.fade-out-splash {
+  animation: fadeOutSplash 1s ease forwards;
+}
+
+@keyframes fadeOutSplash {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* ============ JUEGO ============ */
+.gameContainer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #fff;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+}
+
+
+
+#frameVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#puzzleContainer {
+  width: 100%;
+  height: 100%;
+  max-width: 900px;
+  max-height: 900px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  overflow: hidden;
+}
+
+#puzzleContainer canvas {
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+
+/* ============ PANTALLA DE INICIO ============ */
+#screenStart {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.start-button {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  max-width: 140px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  z-index: 10;
+}
+
+.start-button:active {
+  transform: translateX(-50%) scale(0.95);
+}
+
+.logo-bam {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10%;
+  max-width: 180px;
+  opacity: 0.9;
+  z-index: 2;
+}
+
+/* ============ PANTALLA FINAL / GRACIAS ============ */
+#screenThanks {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  z-index: 10;
+}
+
+#congratsVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+}
+
+#fireworksCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.gameContainer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #fff;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+}
+
+.puzzle-thumbnail {
+  width: 70vmin;
+  max-width: 90vw;
+  max-height: 70vh;
+  height: auto;
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9;
+}
+
+#resultText {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: pre-line;
+  text-align: center;
+  margin: 1rem 0;
+  z-index: 11;
+}
+
+#finalTime, #finalMoves {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+  font-weight: 600;
+  color: #fff;
+}
+
+#topScores {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #fff;
+  text-align: center;
+  z-index: 11;
+}
+
+#topScores li {
+  margin-bottom: 0.4rem;
+}
+
+.again-button {
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  max-width: 140px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  z-index: 10;
+}
+
+.again-button:active {
+  transform: translateX(-50%) scale(0.95);
+}
+
+/* ============ Transiciones Fade ============ */
+.fade-in {
+  opacity: 0;
+  display: block;
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.fade-out {
+  opacity: 1;
+  animation: fadeOut 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+/* ============ Medias ============ */
+@media (max-height: 600px) {
+  .start-button {
+    bottom: 15%;
+    width: 35%;
+  }
+
+  .logo-bam {
+    bottom: 8%;
+    width: 50%;
+  }
+
+  .again-button {
+    width: 35%;
+  }
+}

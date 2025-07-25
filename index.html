@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Juego de Memoria</title>
+
+  <!-- Meta PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Juego de Memoria">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+
+  <!-- Iconos -->
+  <link rel="apple-touch-icon" href="assets/icon192.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="assets/icon192.png">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Pantalla de Carga -->
+  <section id="splashScreen">
+    <img id="splashImage" src="assets/BAM_INTRO.jpg" alt="Intro BAM" />
+    <video autoplay muted playsinline id="splashVideo" style="display: none;">
+      <source src="assets/BAM_INTRO.mp4" type="video/mp4" />
+    </video>
+  </section>
+
+  <!-- Fondo -->
+  <video autoplay muted loop playsinline id="backgroundVideo">
+    <source id="bgSource" src="assets/pagina_1.mp4" type="video/mp4">
+  </video>
+
+  <!-- Inicio -->
+  <section id="screenStart" style="display: none;">
+    <img src="assets/star.png" alt="Iniciar juego" id="playButton" class="start-button" />
+    <img src="assets/logo-BAM.png" alt="Logo BAM" class="logo-bam" />
+  </section>
+
+  <!-- Juego -->
+  <section id="screenGame" style="display: none;">
+    <div id="gameContainer">
+      <video autoplay muted loop playsinline id="frameVideo">
+        <source src="assets/Cuadro.mp4" type="video/mp4">
+      </video>
+      <div id="puzzleContainer"></div>
+    </div>
+  </section>
+
+  <!-- Pantalla Final -->
+  <section id="screenThanks" style="display: none;">
+    <video autoplay muted loop playsinline id="congratsVideo">
+      <source src="assets/congratulacion.mp4" type="video/mp4" />
+    </video>
+    <canvas id="fireworksCanvas"></canvas>
+    <div class="gameContainer">
+      <p id="resultText"></p>
+      <div id="scoreDetails">
+        <p><strong>⏱ Tiempo:</strong> <span id="finalTime">00:00</span></p>
+        <p><strong>🔁 Movimientos:</strong> <span id="finalMoves">0</span></p>
+        <p><strong>🏆 Mejores Puntajes:</strong></p>
+        <ol id="topScores"><li>—</li><li>—</li><li>—</li><li>—</li><li>—</li></ol>
+      </div>
+    </div>
+    <img src="assets/again.png" alt="Reintentar" id="playAgainButton" class="again-button" />
+  </section>
+
+  <!-- Audios -->
+  <audio id="startSound" src="assets/start.mp3"></audio>
+  <audio id="moveSound" src="assets/move.mp3"></audio>
+  <audio id="winSound" src="assets/win.mp3"></audio>
+
+  <!-- Phaser y lógica -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+  <script src="game.js"></script>
+
+  <!-- Script de control -->
+  <script>
+    const playButton = document.getElementById("playButton");
+    const playAgainButton = document.getElementById("playAgainButton");
+    const startSound = document.getElementById("startSound");
+
+    function fadeToScreen(hideId, showId) {
+      const hideEl = document.getElementById(hideId);
+      const showEl = document.getElementById(showId);
+      hideEl.classList.remove("fade-in");
+      hideEl.classList.add("fade-out");
+      hideEl.addEventListener("animationend", () => {
+        hideEl.style.display = "none";
+        hideEl.classList.remove("fade-out");
+        showEl.style.display = "block";
+        showEl.classList.add("fade-in");
+      }, { once: true });
+    }
+
+    playButton.addEventListener("click", () => {
+      startSound.play();
+      startSound.onended = () => {
+        fadeToScreen("screenStart", "screenGame");
+        document.getElementById("bgSource").src = "assets/fondo.mp4";
+        document.getElementById("backgroundVideo").load();
+        if (window.game) window.game.destroy(true);
+        window.game = new Phaser.Game(config);
+      };
+    });
+
+    playAgainButton.addEventListener("click", () => {
+      startSound.play();
+      startSound.onended = () => {
+        fadeToScreen("screenThanks", "screenGame");
+        document.getElementById("bgSource").src = "assets/fondo.mp4";
+        document.getElementById("backgroundVideo").load();
+        if (window.game) window.game.destroy(true);
+        window.game = new Phaser.Game(config);
+      };
+    });
+
+    function scaleOnTouch(el) {
+      el.addEventListener("touchstart", () => el.style.transform = "translateX(-50%) scale(0.95)");
+      el.addEventListener("touchend", () => el.style.transform = "translateX(-50%)");
+    }
+
+    scaleOnTouch(playButton);
+    scaleOnTouch(playAgainButton);
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js').then(() => {
+        console.log("✅ Service Worker registrado");
+      }).catch(err => {
+        console.warn("❌ Error al registrar el Service Worker", err);
+      });
+    }
+
+    function startFireworks() {
+      const canvas = document.getElementById("fireworksCanvas");
+      const ctx = canvas.getContext("2d");
+      let particles = [];
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      function random(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      function createFirework() {
+        const x = random(100, canvas.width - 100);
+        const y = random(50, canvas.height / 2);
+        for (let i = 0; i < 100; i++) {
+          const angle = (Math.PI * 2 * i) / 100;
+          const speed = random(1, 5);
+          particles.push({
+            x, y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            alpha: 1,
+            size: random(1, 3),
+            color: `hsl(${Math.floor(random(0, 360))}, 100%, 60%)`
+          });
+        }
+      }
+
+      function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles = particles.filter(p => p.alpha > 0.05);
+        for (const p of particles) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= 0.01;
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(update);
+      }
+
+      setInterval(createFirework, 800);
+      update();
+    }
+
+    // Splash intro handling
+    const splashVideo = document.getElementById("splashVideo");
+    const splashImage = document.getElementById("splashImage");
+    const splashScreen = document.getElementById("splashScreen");
+
+    setTimeout(() => {
+      splashImage.style.opacity = 0;
+      splashVideo.style.display = "block";
+      splashVideo.play();
+    }, 300);
+
+    splashVideo.addEventListener("ended", () => {
+      splashScreen.classList.add("fade-out-splash");
+      splashScreen.addEventListener("animationend", () => {
+        splashScreen.remove();
+        document.getElementById("screenStart").style.display = "block";
+        document.getElementById("screenStart").classList.add("fade-in");
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>
