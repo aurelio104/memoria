@@ -319,3 +319,67 @@ body, html {
     width: 35%;
   }
 }
+
+
+
+.form-screen {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  z-index: 999;
+  animation: fadeIn 0.6s ease;
+}
+
+.form-glass {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  backdrop-filter: blur(30px);
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  text-align: center;
+  width: 90%;
+  max-width: 350px;
+  color: white;
+  font-family: "Poppins", sans-serif;
+  animation: popIn 0.4s ease;
+}
+
+.form-glass input, .form-glass button {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  outline: none;
+}
+
+.form-glass input {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+.form-glass button {
+  background: #00ffff;
+  font-weight: bold;
+  color: #000;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.form-glass button:active {
+  transform: scale(0.95);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0 } to { opacity: 1 }
+}
+
+@keyframes popIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

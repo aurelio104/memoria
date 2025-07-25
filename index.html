@@ -13,75 +13,19 @@
   <link rel="icon" type="image/png" href="assets/icon192.png">
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
-  <style>
-    .form-screen {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.65);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      backdrop-filter: blur(10px);
-      z-index: 999;
-      animation: fadeIn 0.6s ease;
-    }
-    .form-glass {
-      background: rgba(255, 255, 255, 0.08);
-      padding: 2rem;
-      border-radius: 1.5rem;
-      backdrop-filter: blur(30px);
-      box-shadow: 0 0 30px rgba(0,0,0,0.5);
-      text-align: center;
-      width: 90%;
-      max-width: 350px;
-      color: white;
-      font-family: "Poppins", sans-serif;
-      animation: popIn 0.4s ease;
-    }
-    .form-glass input, .form-glass button {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 12px;
-      border: none;
-      font-size: 1rem;
-      outline: none;
-    }
-    .form-glass input {
-      background: rgba(255,255,255,0.1);
-      color: white;
-    }
-    .form-glass button {
-      background: #00ffff;
-      font-weight: bold;
-      color: #000;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    .form-glass button:active {
-      transform: scale(0.95);
-    }
-    @keyframes fadeIn {
-      from { opacity: 0 } to { opacity: 1 }
-    }
-    @keyframes popIn {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-  </style>
 </head>
-<body>
-  <!-- Formulario (inicial, solo si no hay datos guardados) -->
-  <section id="formScreen" style="display: none;" class="form-screen">
-    <form id="playerForm" class="form-glass">
-      <h2>👤 Tus datos</h2>
-      <input type="text" id="firstName" placeholder="Nombre" required />
-      <input type="text" id="lastName" placeholder="Apellido" required />
-      <input type="email" id="email" placeholder="Correo" required />
-      <button type="submit">Continuar</button>
-    </form>
-  </section>
+<!-- Formulario (oculto por defecto) -->
+<section id="formScreen" style="display: none;" class="form-screen">
+  <form id="playerForm" class="form-glass">
+    <h2>👤 Tus datos</h2>
+    <input type="text" id="firstName" placeholder="Nombre" required />
+    <input type="text" id="lastName" placeholder="Apellido" required />
+    <input type="email" id="email" placeholder="Correo" required />
+    <button type="submit">Continuar</button>
+  </form>
+</section>
 
+<body>
   <!-- Splash Screen -->
   <section id="splashScreen">
     <img id="splashImage" src="assets/BAM_INTRO.jpg" alt="Intro BAM" />
@@ -94,6 +38,17 @@
   <video autoplay muted loop playsinline id="backgroundVideo">
     <source id="bgSource" src="assets/pagina_1.mp4" type="video/mp4">
   </video>
+
+  <!-- Formulario inicial -->
+  <section id="screenForm">
+    <form id="playerForm" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: black; color: white; font-family: sans-serif;">
+      <h2>Ingresa tus datos</h2>
+      <input type="text" id="firstName" placeholder="Nombre" required style="margin: 10px; padding: 10px; width: 80%; max-width: 300px;">
+      <input type="text" id="lastName" placeholder="Apellido" required style="margin: 10px; padding: 10px; width: 80%; max-width: 300px;">
+      <input type="email" id="email" placeholder="Correo" required style="margin: 10px; padding: 10px; width: 80%; max-width: 300px;">
+      <button type="submit" style="padding: 10px 20px; margin-top: 15px; background: #00ffff; border: none; color: black; font-weight: bold;">Comenzar</button>
+    </form>
+  </section>
 
   <!-- Inicio -->
   <section id="screenStart" style="display: none;">
@@ -134,76 +89,174 @@
   <audio id="moveSound" src="assets/move.mp3"></audio>
   <audio id="winSound" src="assets/win.mp3"></audio>
 
-  <!-- Phaser y lógica -->
+  <!-- Phaser y Juego -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
   <script src="game.js"></script>
 
-  <!-- Script principal -->
-  <script>
-    const playButton = document.getElementById("playButton");
-    const playAgainButton = document.getElementById("playAgainButton");
-    const startSound = document.getElementById("startSound");
+  <!-- Script de control -->
+<script>
+  const playButton = document.getElementById("playButton");
+  const playAgainButton = document.getElementById("playAgainButton");
+  const startSound = document.getElementById("startSound");
 
-    function fadeToScreen(hideId, showId) {
-      const hideEl = document.getElementById(hideId);
-      const showEl = document.getElementById(showId);
+  const formScreen = document.getElementById("formScreen");
+  const playerForm = document.getElementById("playerForm");
+
+  const splashVideo = document.getElementById("splashVideo");
+  const splashImage = document.getElementById("splashImage");
+  const splashScreen = document.getElementById("splashScreen");
+
+  function fadeToScreen(hideId, showId) {
+    const hideEl = document.getElementById(hideId);
+    const showEl = document.getElementById(showId);
+    hideEl.classList.remove("fade-in");
+    hideEl.classList.add("fade-out");
+    hideEl.addEventListener("animationend", () => {
       hideEl.style.display = "none";
+      hideEl.classList.remove("fade-out");
       showEl.style.display = "block";
-    }
+      showEl.classList.add("fade-in");
+    }, { once: true });
+  }
 
-    function iniciarJuego() {
-      document.getElementById("bgSource").src = "assets/fondo.mp4";
-      document.getElementById("backgroundVideo").load();
-      fadeToScreen("screenStart", "screenGame");
-      if (window.game) window.game.destroy(true);
-      window.game = new Phaser.Game(config);
-    }
+  // 🎬 Splash Video
+  setTimeout(() => {
+    splashImage.style.opacity = 0;
+    splashVideo.style.display = "block";
+    splashVideo.play();
+  }, 300);
 
-    playButton.addEventListener("click", () => {
+  splashVideo.addEventListener("ended", () => {
+    splashScreen.classList.add("fade-out-splash");
+    splashScreen.addEventListener("animationend", () => {
+      splashScreen.remove();
+
       const saved = localStorage.getItem("bam-player");
       if (saved) {
-        iniciarJuego();
+        // Si ya se guardaron datos, mostrar pantalla de inicio directamente
+        document.getElementById("screenStart").style.display = "block";
+        document.getElementById("screenStart").classList.add("fade-in");
       } else {
-        document.getElementById("screenStart").style.display = "none";
-        document.getElementById("formScreen").style.display = "flex";
+        // Si no, pedir datos
+        formScreen.style.display = "flex";
       }
-    });
+    }, { once: true });
+  });
 
-    playAgainButton.addEventListener("click", () => {
+  // 🧾 FORMULARIO
+  playerForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("firstName").value.trim();
+    const last = document.getElementById("lastName").value.trim();
+    const email = document.getElementById("email").value.trim();
+
+    const country = await fetch("https://ipapi.co/json/")
+      .then(res => res.json())
+      .then(data => data.country_name)
+      .catch(() => "Desconocido");
+
+    const playerData = { name, last, email, country };
+    localStorage.setItem("bam-player", JSON.stringify(playerData));
+
+    formScreen.style.display = "none";
+    document.getElementById("screenStart").style.display = "block";
+    document.getElementById("screenStart").classList.add("fade-in");
+  });
+
+  // ▶️ BOTÓN JUGAR
+  playButton.addEventListener("click", () => {
+    startSound.play();
+    startSound.onended = () => {
       iniciarJuego();
-    });
+    };
+  });
 
-    const splashVideo = document.getElementById("splashVideo");
-    const splashImage = document.getElementById("splashImage");
-    const splashScreen = document.getElementById("splashScreen");
+  function iniciarJuego() {
+    document.getElementById("bgSource").src = "assets/fondo.mp4";
+    document.getElementById("backgroundVideo").load();
+    fadeToScreen("screenStart", "screenGame");
+    if (window.game) window.game.destroy(true);
+    window.game = new Phaser.Game(config);
+  }
 
-    setTimeout(() => {
-      splashImage.style.opacity = 0;
-      splashVideo.style.display = "block";
-      splashVideo.play();
-    }, 300);
+  // 🔁 REINTENTAR
+  playAgainButton.addEventListener("click", () => {
+    startSound.play();
+    startSound.onended = () => {
+      fadeToScreen("screenThanks", "screenGame");
+      document.getElementById("bgSource").src = "assets/fondo.mp4";
+      document.getElementById("backgroundVideo").load();
+      if (window.game) window.game.destroy(true);
+      window.game = new Phaser.Game(config);
+    };
+  });
 
-    splashVideo.addEventListener("ended", () => {
-      splashScreen.remove();
-      document.getElementById("screenStart").style.display = "block";
-    });
+  // 🔍 Toques en botones
+  function scaleOnTouch(el) {
+    el.addEventListener("touchstart", () => el.style.transform = "translateX(-50%) scale(0.95)");
+    el.addEventListener("touchend", () => el.style.transform = "translateX(-50%)");
+  }
 
-    const formScreen = document.getElementById("formScreen");
-    const playerForm = document.getElementById("playerForm");
+  scaleOnTouch(playButton);
+  scaleOnTouch(playAgainButton);
 
-    playerForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name = document.getElementById("firstName").value.trim();
-      const last = document.getElementById("lastName").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const country = await fetch("https://ipapi.co/json/")
-        .then(res => res.json())
-        .then(data => data.country_name)
-        .catch(() => "Desconocido");
-      localStorage.setItem("bam-player", JSON.stringify({ name, last, email, country }));
-      formScreen.style.display = "none";
-      iniciarJuego();
-    });
-  </script>
+  // 🔥 Fireworks
+  function startFireworks() {
+    const canvas = document.getElementById("fireworksCanvas");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function createFirework() {
+      const x = random(100, canvas.width - 100);
+      const y = random(50, canvas.height / 2);
+      for (let i = 0; i < 100; i++) {
+        const angle = (Math.PI * 2 * i) / 100;
+        const speed = random(1, 5);
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          alpha: 1,
+          size: random(1, 3),
+          color: `hsl(${Math.floor(random(0, 360))}, 100%, 60%)`
+        });
+      }
+    }
+
+    function update() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles = particles.filter(p => p.alpha > 0.05);
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.01;
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(update);
+    }
+
+    setInterval(createFirework, 800);
+    update();
+  }
+
+  // 🛠️ Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log("✅ Service Worker registrado"))
+      .catch(err => console.warn("❌ Error al registrar el Service Worker", err));
+  }
+</script>
 </body>
 </html>

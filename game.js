@@ -130,8 +130,12 @@ function flipCard(scene, card) {
                 `<li>${i + 1}. ${s.name} (${s.country}) – Tiempo: ${s.time}s, Movs: ${s.moves}</li>`)
               .join("");
 
-            document.getElementById("resultText").textContent =
-              `¡Completado!\nPares encontrados: ${matchedPairs}`;
+const player = JSON.parse(localStorage.getItem("bam-player") || "{}");
+document.getElementById("resultText").textContent =
+  `¡Completado!\nPares encontrados: ${matchedPairs}\n` +
+  `Jugador: ${player.name || "-"} ${player.last || "-"}\n` +
+  `País: ${player.country || "Desconocido"}`;
+
             startFireworks();
           });
         }
