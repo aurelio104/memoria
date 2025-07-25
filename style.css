@@ -174,32 +174,30 @@ body, html {
 #screenThanks {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   overflow: hidden;
   z-index: 10;
+  width: 100vw;
+  height: 100vh;
 }
 
 #congratsVideo {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   z-index: -1;
 }
 
 #fireworksCanvas {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 10;
 }
@@ -209,40 +207,28 @@ body, html {
   z-index: 1;
   text-align: center;
   color: #fff;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
-  width: 100%;
-  height: 100%;
   padding: 1rem;
-}
-
-.puzzle-thumbnail {
-  width: 70vmin;
-  max-width: 90vw;
-  max-height: 70vh;
-  height: auto;
-  position: absolute;
-  top: 42%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9;
+  width: 100%;
+  max-width: 100vw;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 #resultText {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #fff;
   white-space: pre-line;
-  text-align: center;
   margin: 1rem 0;
+  text-align: center;
   z-index: 11;
 }
 
-#finalTime, #finalMoves {
+#finalTime,
+#finalMoves {
   font-size: 1.2rem;
   margin: 0.5rem 0;
   font-weight: 600;
@@ -254,9 +240,9 @@ body, html {
   padding: 0;
   margin-top: 1rem;
   font-size: 1rem;
-  color: #fff;
   text-align: center;
   z-index: 11;
+  color: #fff;
 }
 
 #topScores li {
@@ -265,11 +251,11 @@ body, html {
 
 .again-button {
   position: absolute;
-  top: 80%;
+  bottom: 8%;
   left: 50%;
   transform: translateX(-50%);
-  width: 120%;
-  max-width: 140px;
+  width: 120px;
+  max-width: 40vw;
   cursor: pointer;
   transition: transform 0.2s ease;
   z-index: 10;
@@ -279,7 +265,65 @@ body, html {
   transform: translateX(-50%) scale(0.95);
 }
 
-/* ============ Transiciones Fade ============ */
+/* ============ FORMULARIO VIDRIO ============ */
+.form-screen {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  z-index: 999;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.form-glass {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  backdrop-filter: blur(30px);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  width: 100%;
+  max-width: 360px;
+  color: white;
+  font-family: "Poppins", sans-serif;
+  animation: popIn 0.4s ease;
+  box-sizing: border-box;
+}
+
+.form-glass input,
+.form-glass button {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.form-glass input {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.form-glass button {
+  background: #00ffff;
+  font-weight: bold;
+  color: #000;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.form-glass button:active {
+  transform: scale(0.95);
+}
+
+/* ============ ANIMACIONES ============ */
 .fade-in {
   opacity: 0;
   display: block;
@@ -292,6 +336,9 @@ body, html {
 }
 
 @keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
   to {
     opacity: 1;
   }
@@ -303,7 +350,18 @@ body, html {
   }
 }
 
-/* ============ Medias ============ */
+@keyframes popIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ============ RESPONSIVE EXTRA ============ */
 @media (max-height: 600px) {
   .start-button {
     bottom: 15%;
@@ -320,72 +378,7 @@ body, html {
   }
 }
 
-
-
-
+/* ============ UTILS ============ */
 .hidden {
   display: none !important;
-}
-
-
-.form-screen {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.65);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  backdrop-filter: blur(10px);
-  z-index: 999;
-  animation: fadeIn 0.6s ease;
-}
-
-.form-glass {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 2rem;
-  border-radius: 1.5rem;
-  backdrop-filter: blur(30px);
-  box-shadow: 0 0 30px rgba(0,0,0,0.5);
-  text-align: center;
-  width: 90%;
-  max-width: 350px;
-  color: white;
-  font-family: "Poppins", sans-serif;
-  animation: popIn 0.4s ease;
-}
-
-.form-glass input, .form-glass button {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 12px;
-  border: none;
-  font-size: 1rem;
-  outline: none;
-}
-
-.form-glass input {
-  background: rgba(255,255,255,0.1);
-  color: white;
-}
-
-.form-glass button {
-  background: #00ffff;
-  font-weight: bold;
-  color: #000;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.form-glass button:active {
-  transform: scale(0.95);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0 } to { opacity: 1 }
-}
-
-@keyframes popIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
 }
